@@ -1,7 +1,7 @@
-package updates
+package stru
 
 import (
-	"GO/app/tel/updates/struct/up_types"
+	"GO/app/tel/updates/stru/up_types"
 )
 
 type Update struct {
