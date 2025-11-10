@@ -1,6 +1,7 @@
 package up_types
 
 import (
+	"GO/app/tel/updates/interfaces"
 	"GO/app/tel/updates/stru/up_types/update_particles"
 )
 
@@ -15,4 +16,8 @@ type Message struct {
 
 func (m *Message) GetUser() int {
 	return m.From.Id
+}
+
+func (m *Message) GetUpdateType() interfaces.UpdateType {
+	return interfaces.Message
 }

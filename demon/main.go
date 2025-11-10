@@ -8,9 +8,10 @@ import (
 
 	"GO/app/tel/updates/interfaces"
 	"GO/app/tel/updates/stru"
+	"GO/app/tel/updates/stru/up_types"
+
 	// "GO/app/tel/updates/stru/up_types"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 )
 
@@ -40,23 +41,28 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	for _, value := range update.Result {
-		handleUpdates(value)
+		handleUpdates(&value)
 		// fmt.Println(value.Message)
 	}
 }
 
-func handleUpdates(update stru.Result) {
-	value := update.Message
+func handleUpdates(update interfaces.Update) {
+	update_type := update.GetUpdateType()
 
-	if value != nil {
-		handleMessage(value, UserChannels)
+	switch update_type {
+	case interfaces.Message:
+
+		update := update.(*up_types.Message)
+		handleMessage(update, UserChannels)
 	}
 }
 
-func handleMessage(update interfaces.UserGetter, channels map[int]stru.UserChannel) {
-	var activeStruct stru.UserChannel
-
-	user_id = update.GetUser()
+func handleMessage(update up_types.Message, channels map[int]stru.UserChannel) {
+	user_id := update.GetUser()
 
 	activeStruct, ok := channels[user_id]
+
+	if !ok {
+		activeStruct := stru.UserChannel{Update: update}
+	}
 }
