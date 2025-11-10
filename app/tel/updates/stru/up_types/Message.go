@@ -12,3 +12,7 @@ type Message struct {
 	Date       int
 	Text       *string
 }
+
+func (m *Message) GetUser() int {
+	return m.From.Id
+}

@@ -1,5 +1,5 @@
 package interfaces
 
 type UserGetter interface {
-	getUser() int
+	GetUser() int
 }
