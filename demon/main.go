@@ -6,16 +6,20 @@ import (
 	"io"
 	"net/http"
 
+	"GO/app/tel/updates/interfaces"
 	"GO/app/tel/updates/stru"
+	// "GO/app/tel/updates/stru/up_types"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 )
 
+var UserChannels map[int]stru.UserChannel
+
 func main() {
 	godotenv.Load()
 	http.HandleFunc("/webhook", httpHandler)
-	go http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":8000", nil)
 }
 
 func httpHandler(resp http.ResponseWriter, req *http.Request) {
@@ -36,15 +40,23 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	for _, value := range update.Result {
-		spew.Dump(value)
+		handleUpdates(value)
 		// fmt.Println(value.Message)
 	}
 }
 
-func handleUpdates(updatesChannel chan stru.Update) {
-	var UserChannels map[int]stru.UserChannel
+func handleUpdates(update stru.Result) {
+	value := update.Message
 
-	for update := range updatesChannel {
-		checkI
+	if value != nil {
+		handleMessage(value, UserChannels)
 	}
+}
+
+func handleMessage(update interfaces.UserGetter, channels map[int]stru.UserChannel) {
+	var activeStruct stru.UserChannel
+
+	user_id = update.GetUser()
+
+	activeStruct, ok := channels[user_id]
 }
