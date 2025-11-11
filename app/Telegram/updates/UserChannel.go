@@ -1,4 +1,4 @@
-package stru
+package updates
 
 type UserChannel struct {
 	Update    Update

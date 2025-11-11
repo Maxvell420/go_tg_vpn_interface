@@ -1,4 +1,4 @@
-package update_particles
+package updates
 
 type NewChatMember struct {
 	Status ChatStatus

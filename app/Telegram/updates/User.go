@@ -1,4 +1,4 @@
-package update_particles
+package updates
 
 type User struct {
 	Id     int

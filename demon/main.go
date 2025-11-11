@@ -6,10 +6,6 @@ import (
 	"io"
 	"net/http"
 
-	"GO/app/tel/updates/interfaces"
-	"GO/app/tel/updates/stru"
-	"GO/app/tel/updates/stru/up_types"
-
 	// "GO/app/tel/updates/stru/up_types"
 
 	"github.com/joho/godotenv"
@@ -40,10 +36,9 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	for _, value := range update.Result {
-		handleUpdates(&value)
-		// fmt.Println(value.Message)
-	}
+	value := update.Result
+
+	handleUpdates(&value)
 }
 
 func handleUpdates(update interfaces.Update) {

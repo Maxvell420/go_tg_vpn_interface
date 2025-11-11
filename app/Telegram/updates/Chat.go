@@ -1,8 +1,7 @@
-package update_particles
+package updates
 
-type From struct {
+type Chat struct {
 	Id         int
-	Is_bot     bool
 	First_name *string
 	Last_name  *string
 	Username   *string

@@ -1,4 +1,4 @@
-package update_particles
+package updates
 
 type Entity struct {
 	Type            string `json:"type"`
