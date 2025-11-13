@@ -6,30 +6,32 @@ import (
 	"io"
 	"net/http"
 
-	// "GO/app/tel/updates/stru/up_types"
+	"github.com/davecgh/go-spew/spew"
+
+	"GO/app/telegram/entities"
+	"GO/app/telegram/updates"
 
 	"github.com/joho/godotenv"
 )
 
-var UserChannels map[int]stru.UserChannel
+var UserChannels map[int]entities.UserChannel
 
 func main() {
 	godotenv.Load()
 	http.HandleFunc("/webhook", httpHandler)
+	UserChannels = make(map[int]entities.UserChannel)
 	http.ListenAndServe(":8000", nil)
 }
 
 func httpHandler(resp http.ResponseWriter, req *http.Request) {
-	var update stru.Update
+	var update updates.TelegramUpdate
 
-	// Читаем Body правильно
 	bytes, err := io.ReadAll(req.Body)
 	if err != nil {
 		fmt.Println("Error reading body:", err)
 		return
 	}
 
-	// Декодируем JSON
 	err = json.Unmarshal(bytes, &update)
 	if err != nil {
 		fmt.Println("Error unmarshaling JSON:", err)
@@ -41,23 +43,32 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 	handleUpdates(&value)
 }
 
-func handleUpdates(update interfaces.Update) {
-	update_type := update.GetUpdateType()
+func handleUpdates(tg_update updates.UserUpdate) {
+	update_type := tg_update.GetUpdateType()
 
 	switch update_type {
-	case interfaces.Message:
+	case updates.MessageType:
 
-		update := update.(*up_types.Message)
-		handleMessage(update, UserChannels)
+		update := tg_update.(*updates.Update)
+		user_id := update.Message.GetUser()
+		activeStruct, ok := UserChannels[user_id]
+		if !ok {
+			ch := make(chan updates.UserUpdate)
+			activeStruct = entities.UserChannel{Update: update, Ch: &ch}
+			UserChannels[user_id] = activeStruct
+			go handleUpdate(&ch)
+			fmt.Println("created")
+			*activeStruct.Ch <- tg_update
+
+		} else {
+			fmt.Println("existed")
+			*activeStruct.Ch <- tg_update
+		}
 	}
 }
 
-func handleMessage(update up_types.Message, channels map[int]stru.UserChannel) {
-	user_id := update.GetUser()
-
-	activeStruct, ok := channels[user_id]
-
-	if !ok {
-		activeStruct := stru.UserChannel{Update: update}
+func handleUpdate(channel *chan updates.UserUpdate) {
+	for item := range *channel {
+		spew.Dump(item)
 	}
 }

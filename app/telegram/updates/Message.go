@@ -12,7 +12,3 @@ type Message struct {
 func (m *Message) GetUser() int {
 	return m.From.Id
 }
-
-func (m *Message) GetUpdateType() UpdateType {
-	return MessageType
-}
