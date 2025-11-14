@@ -41,6 +41,7 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 	value := update.Result
 
 	handleUpdates(&value)
+	resp.WriteHeader(http.StatusOK)
 }
 
 func handleUpdates(tg_update updates.UserUpdate) {
@@ -57,11 +58,9 @@ func handleUpdates(tg_update updates.UserUpdate) {
 			activeStruct = entities.UserChannel{Update: update, Ch: &ch}
 			UserChannels[user_id] = activeStruct
 			go handleUpdate(&ch)
-			fmt.Println("created")
 			*activeStruct.Ch <- tg_update
 
 		} else {
-			fmt.Println("existed")
 			*activeStruct.Ch <- tg_update
 		}
 	}
