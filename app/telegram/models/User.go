@@ -4,7 +4,7 @@ type User struct {
 	id int
 }
 
-func (u *User) getTable() string {
+func (u *User) GetTable() string {
 	return "users"
 }
 
