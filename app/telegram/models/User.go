@@ -1,13 +1,13 @@
 package models
 
 type User struct {
-	id int
+	Id int
 }
 
-func (u *User) GetTable() string {
+func (u User) GetTable() string {
 	return "users"
 }
 
 func (u *User) getID() int {
-	return u.id
+	return u.Id
 }
