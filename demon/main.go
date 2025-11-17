@@ -6,18 +6,23 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/davecgh/go-spew/spew"
+	// "github.com/davecgh/go-spew/spew"
 
+	"GO/app/core"
+	"GO/app/telegram"
 	"GO/app/telegram/entities"
 	"GO/app/telegram/updates"
 
 	"github.com/joho/godotenv"
 )
 
-var UserChannels map[int]entities.UserChannel
+var (
+	UserChannels map[int]entities.UserChannel
+	Context      core.Context
+)
 
 func main() {
-	godotenv.Load()
+	godotenv.Load("../.env")
 	http.HandleFunc("/webhook", httpHandler)
 	UserChannels = make(map[int]entities.UserChannel)
 	http.ListenAndServe(":8000", nil)
@@ -25,7 +30,6 @@ func main() {
 
 func httpHandler(resp http.ResponseWriter, req *http.Request) {
 	var update updates.TelegramUpdate
-
 	bytes, err := io.ReadAll(req.Body)
 	if err != nil {
 		fmt.Println("Error reading body:", err)
@@ -40,11 +44,11 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 
 	value := update.Result
 
-	handleUpdates(&value)
+	handleUpdates(&value, &Context)
 	resp.WriteHeader(http.StatusOK)
 }
 
-func handleUpdates(tg_update updates.UserUpdate) {
+func handleUpdates(tg_update updates.UserUpdate, Context *core.Context) {
 	update_type := tg_update.GetUpdateType()
 
 	switch update_type {
@@ -57,7 +61,7 @@ func handleUpdates(tg_update updates.UserUpdate) {
 			ch := make(chan updates.UserUpdate)
 			activeStruct = entities.UserChannel{Update: update, Ch: &ch}
 			UserChannels[user_id] = activeStruct
-			go handleUpdate(&ch)
+			go handleUpdate(&ch, Context)
 			*activeStruct.Ch <- tg_update
 
 		} else {
@@ -66,8 +70,13 @@ func handleUpdates(tg_update updates.UserUpdate) {
 	}
 }
 
-func handleUpdate(channel *chan updates.UserUpdate) {
+func handleUpdate(channel *chan updates.UserUpdate, Context *core.Context) {
+	db := Context.GetDb()
 	for item := range *channel {
-		spew.Dump(item)
+		facade := telegram.TelegramFacade{Db: db}
+		if item.GetUpdateType() == updates.MessageType {
+			update := item.(*updates.Update)
+			facade.HandleMessageUpdate(*update.Message)
+		}
 	}
 }

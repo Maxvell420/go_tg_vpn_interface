@@ -1,14 +1,15 @@
 package telegram
 
 import (
-	"GO/app/core/database"
+	"database/sql"
+
 	"GO/app/telegram/repositories"
 	"GO/app/telegram/services"
 	"GO/app/telegram/updates"
 )
 
 type TelegramFacade struct {
-	Db *database.Mysql
+	Db *sql.DB
 }
 
 func (f *TelegramFacade) HandleMessageUpdate(update updates.Message) {

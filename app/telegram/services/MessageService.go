@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"GO/app/telegram/repositories"
 	"GO/app/telegram/updates"
 )
@@ -11,6 +13,10 @@ type MessageService struct {
 
 func (s *MessageService) HandleMessageUpdate(update updates.Message) {
 	user_id := update.From.Id
+	user, err := s.UserRepo.GetByTgID(user_id)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	user := 1
+	fmt.Println(user)
 }

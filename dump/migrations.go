@@ -36,4 +36,6 @@ func runSql(sql string, db *sql.DB) {
 		fmt.Println(err)
 		os.Exit(500)
 	}
+
+	fmt.Println("Все четко")
 }

@@ -1,6 +1,6 @@
 package models
 
 type Model interface {
-	getID() int
-	getTable() string
+	GetID() int
+	GetTable() string
 }
