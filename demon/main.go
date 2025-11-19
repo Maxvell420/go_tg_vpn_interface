@@ -58,25 +58,24 @@ func handleUpdates(tg_update updates.UserUpdate, Context *core.Context) {
 		user_id := update.Message.GetUser()
 		activeStruct, ok := UserChannels[user_id]
 		if !ok {
-			ch := make(chan updates.UserUpdate)
-			activeStruct = entities.UserChannel{Update: update, Ch: &ch}
+			ch := make(chan *updates.Update)
+			activeStruct = entities.UserChannel{Update: update, Ch: ch}
 			UserChannels[user_id] = activeStruct
-			go handleUpdate(&ch, Context)
-			*activeStruct.Ch <- tg_update
+			go handleUpdate(ch, Context)
+			activeStruct.Ch <- update
 
 		} else {
-			*activeStruct.Ch <- tg_update
+			activeStruct.Ch <- update
 		}
 	}
 }
 
-func handleUpdate(channel *chan updates.UserUpdate, Context *core.Context) {
+func handleUpdate(channel chan *updates.Update, Context *core.Context) {
 	db := Context.GetDb()
-	for item := range *channel {
+	for item := range channel {
 		facade := telegram.TelegramFacade{Db: db}
 		if item.GetUpdateType() == updates.MessageType {
-			update := item.(*updates.Update)
-			facade.HandleMessageUpdate(*update.Message)
+			facade.HandleMessageUpdate(*item.Message)
 		}
 	}
 }
