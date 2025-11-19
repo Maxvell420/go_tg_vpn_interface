@@ -6,6 +6,6 @@ import (
 
 type UserChannel struct {
 	Timestamp int
-	Update    updates.UserUpdate
-	Ch        *chan updates.UserUpdate
+	Update    *updates.Update
+	Ch        chan *updates.Update
 }
