@@ -51,10 +51,10 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 func handleUpdates(tg_update updates.UserUpdate, Context *core.Context) {
 	update_type := tg_update.GetUpdateType()
 
+	update := tg_update.(*updates.Update)
 	switch update_type {
 	case updates.MessageType:
 
-		update := tg_update.(*updates.Update)
 		user_id := update.Message.GetUser()
 		activeStruct, ok := UserChannels[user_id]
 		if !ok {
