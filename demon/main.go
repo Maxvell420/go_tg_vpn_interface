@@ -71,9 +71,8 @@ func handleUpdates(tg_update updates.UserUpdate, Context *core.Context) {
 }
 
 func handleUpdate(channel chan *updates.Update, Context *core.Context) {
-	db := Context.GetDb()
 	for item := range channel {
-		facade := telegram.TelegramFacade{Db: db}
+		facade := telegram.TelegramFacade{Cntx: Context}
 		if item.GetUpdateType() == updates.MessageType {
 			facade.HandleMessageUpdate(*item.Message)
 		}
