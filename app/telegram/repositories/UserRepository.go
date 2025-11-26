@@ -22,30 +22,27 @@ func (r *UserRepository) GetDB() *sql.DB {
 	return r.Db
 }
 
-func (r *UserRepository) GetByID(id int) (models.User, error) {
+func (r *UserRepository) GetByID(id int) *models.User {
 	model := r.GetModel()
 	table := model.GetTable()
-
-	sql := "SELECT id,tg_id FROM " + table + " WHERE id = " + strconv.Itoa(id)
+	sql := "SELECT id,tg_id,user_name,kicked,is_admin FROM " + table + " WHERE id = " + strconv.Itoa(id)
 	row := r.Db.QueryRow(sql)
-	err := row.Scan(&model.Id, &model.Tg_id)
+	user, err := model.FromDB(row)
 	if err != nil {
 		fmt.Println("ошибка получения юзера")
 	}
-	return model, err
+	return &user
 }
 
-func (r *UserRepository) GetByTgID(id int) (models.User, error) {
+func (r *UserRepository) GetByTgID(id int) (*models.User, error) {
 	model := r.GetModel()
 	table := model.GetTable()
 
-	sql := "SELECT id,tg_id FROM " + table + " WHERE tg_id = " + strconv.Itoa(id)
-	fmt.Println(sql)
+	sql := "SELECT id,tg_id,user_name,kicked,is_admin FROM " + table + " WHERE tg_id = " + strconv.Itoa(id)
 	row := r.Db.QueryRow(sql)
-
-	err := row.Scan(&model.Id, &model.Tg_id)
+	user, err := model.FromDB(row)
 	if err != nil {
 		fmt.Println("ошибка получения юзера")
 	}
-	return model, err
+	return &user, err
 }

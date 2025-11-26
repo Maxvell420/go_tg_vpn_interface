@@ -3,12 +3,15 @@ package services
 import (
 	"fmt"
 
+	"GO/app/libs/telegram"
+	"GO/app/outworld"
 	"GO/app/telegram/repositories"
 	"GO/app/telegram/updates"
 )
 
 type MessageService struct {
-	UserRepo *repositories.UserRepository
+	UserRepo       *repositories.UserRepository
+	OutworldFacade *outworld.OutworldFacade
 }
 
 func (s *MessageService) HandleMessageUpdate(update updates.Message) {
@@ -17,6 +20,13 @@ func (s *MessageService) HandleMessageUpdate(update updates.Message) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	message := telegram.Message{
+		ChatID: *user.Tg_id, Text: "hello world",
+	}
 
-	fmt.Println(user)
+	data := telegram.PostRequest{
+		Message: &message, Method: telegram.SendMessage,
+	}
+
+	s.OutworldFacade.SendTelegramPost(data)
 }

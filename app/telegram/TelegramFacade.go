@@ -1,15 +1,15 @@
 package telegram
 
 import (
-	"database/sql"
-
+	"GO/app/core"
+	"GO/app/outworld"
 	"GO/app/telegram/repositories"
 	"GO/app/telegram/services"
 	"GO/app/telegram/updates"
 )
 
 type TelegramFacade struct {
-	Db *sql.DB
+	Cntx *core.Context
 }
 
 func (f *TelegramFacade) HandleMessageUpdate(update updates.Message) {
@@ -17,13 +17,17 @@ func (f *TelegramFacade) HandleMessageUpdate(update updates.Message) {
 	service.HandleMessageUpdate(update)
 }
 
+func (f *TelegramFacade) buildOutworldFacade() *outworld.OutworldFacade {
+	return &outworld.OutworldFacade{Cntx: f.Cntx}
+}
+
 func (f *TelegramFacade) buildUserRepository() *repositories.UserRepository {
-	repo := repositories.UserRepository{Db: f.Db}
+	repo := repositories.UserRepository{Db: f.Cntx.GetDb()}
 	return &repo
 }
 
 func (f *TelegramFacade) buildMessageService() *services.MessageService {
 	repo := f.buildUserRepository()
-	service := services.MessageService{UserRepo: repo}
+	service := services.MessageService{UserRepo: repo, OutworldFacade: f.buildOutworldFacade()}
 	return &service
 }

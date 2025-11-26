@@ -9,4 +9,5 @@ type Repository interface {
 	GetByID() (models.Model, error)
 	GetModel() models.Model
 	GetDB() database.Mysql
+	BuildModel() models.Model
 }

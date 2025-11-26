@@ -8,7 +8,8 @@ import (
 )
 
 type Context struct {
-	db *database.Mysql
+	db      *database.Mysql
+	secrets *Secrets
 }
 
 func (c *Context) GetDb() *sql.DB {
@@ -22,4 +23,13 @@ func (c *Context) GetDb() *sql.DB {
 		c.db = &db
 	}
 	return c.db.GetDb()
+}
+
+func (c *Context) GetSecrets() *Secrets {
+	if c.secrets == nil {
+		botToken := os.Getenv("bot_token")
+		secrets := Secrets{BotToken: &botToken}
+		c.secrets = &secrets
+	}
+	return c.secrets
 }
