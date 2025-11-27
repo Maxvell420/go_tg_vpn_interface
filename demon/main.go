@@ -44,37 +44,33 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 
 	value := update.Result
 
-	handleUpdates(&value, &Context)
+	handleUpdates(value, &Context)
 	resp.WriteHeader(http.StatusOK)
 }
 
-func handleUpdates(tg_update updates.UserUpdate, Context *core.Context) {
-	update_type := tg_update.GetUpdateType()
-
-	update := tg_update.(*updates.Update)
-	switch update_type {
-	case updates.MessageType:
-
-		user_id := update.Message.GetUser()
-		activeStruct, ok := UserChannels[user_id]
-		if !ok {
-			ch := make(chan *updates.Update)
-			activeStruct = entities.UserChannel{Update: update, Ch: ch}
-			UserChannels[user_id] = activeStruct
-			go handleUpdate(ch, Context)
-			activeStruct.Ch <- update
-
-		} else {
-			activeStruct.Ch <- update
-		}
+func handleUpdates(tg_update updates.Update, Context *core.Context) {
+	user_id := tg_update.GetUserId()
+	activeStruct, ok := UserChannels[user_id]
+	if !ok {
+		ch := make(chan *updates.Update)
+		activeStruct = entities.UserChannel{Update: &tg_update, Ch: &ch}
+		UserChannels[user_id] = activeStruct
+		go handleUpdate(&ch, Context)
 	}
+	*activeStruct.Ch <- &tg_update
+
+	// Здесь нужно будет разбить обновления где есть юзер а где нет
 }
 
-func handleUpdate(channel chan *updates.Update, Context *core.Context) {
-	for item := range channel {
-		facade := telegram.TelegramFacade{Cntx: Context}
-		if item.GetUpdateType() == updates.MessageType {
-			facade.HandleMessageUpdate(*item.Message)
+func handleUpdate(channel *chan *updates.Update, Context *core.Context) {
+	facade := telegram.TelegramFacade{Cntx: Context}
+	for item := range *channel {
+		update_type := item.GetUpdateType()
+		switch update_type {
+		case updates.MessageType:
+			facade.HandleMessageUpdate(*item.GetMessage())
+		case updates.MyChatMemberType:
+			facade.HandleMyChatMemberUpdate(*item.GetMyChatMember())
 		}
 	}
 }
