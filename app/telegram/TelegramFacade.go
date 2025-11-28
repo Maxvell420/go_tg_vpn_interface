@@ -33,10 +33,14 @@ func (f *TelegramFacade) buildUserRepository() *repositories.UserRepository {
 
 func (f *TelegramFacade) buildMessageService() *services.MessageService {
 	repo := f.buildUserRepository()
-	service := services.MessageService{UserRepo: repo, OutworldFacade: f.buildOutworldFacade()}
+	service := services.MessageService{UserRepo: repo, OutworldFacade: f.buildOutworldFacade(), CommandsHandler: f.buildCommandService()}
 	return &service
 }
 
 func (f *TelegramFacade) buildMyChatMemberService() *services.MyChatMemberService {
 	return &services.MyChatMemberService{UserRepository: *f.buildUserRepository()}
+}
+
+func (f *TelegramFacade) buildCommandService() *services.CommandService {
+	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.buildOutworldFacade()}
 }

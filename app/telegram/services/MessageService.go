@@ -10,18 +10,28 @@ import (
 )
 
 type MessageService struct {
-	UserRepo       *repositories.UserRepository
-	OutworldFacade *outworld.OutworldFacade
+	UserRepo        *repositories.UserRepository
+	OutworldFacade  *outworld.OutworldFacade
+	CommandsHandler *CommandService
 }
 
 func (s *MessageService) HandleMessageUpdate(update updates.Message) {
+	// Думаю тут будет поиск стейтов
+	if update.IsCommand() {
+		s.CommandsHandler.HandleCommand(update)
+	} else {
+		s.HandleRegularMessage(update)
+	}
+}
+
+func (s *MessageService) HandleRegularMessage(update updates.Message) {
 	user_id := update.From.Id
 	user, err := s.UserRepo.GetByTgID(user_id)
 	if err != nil {
 		fmt.Println(err)
 	}
 	message := telegram.Message{
-		ChatID: *user.Tg_id, Text: "hello world",
+		ChatID: *user.Tg_id, Text: "Это текст заглушка",
 	}
 
 	data := telegram.PostRequest{

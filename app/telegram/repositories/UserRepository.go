@@ -24,7 +24,7 @@ func (r *UserRepository) GetDB() *sql.DB {
 	return r.Db
 }
 
-func (r *UserRepository) GetByID(id int) *models.User {
+func (r *UserRepository) GetByID(id int) models.User {
 	model := r.GetModel()
 	table := model.GetTable()
 	sql := "SELECT id,tg_id,user_name,kicked,is_admin FROM " + table + " WHERE id = " + strconv.Itoa(id)
@@ -33,7 +33,7 @@ func (r *UserRepository) GetByID(id int) *models.User {
 	if err != nil {
 		fmt.Println("ошибка получения юзера")
 	}
-	return &user
+	return user
 }
 
 func (r *UserRepository) GetByTgID(id int) (models.User, error) {
