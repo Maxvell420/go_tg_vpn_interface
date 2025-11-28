@@ -12,3 +12,17 @@ type Message struct {
 func (m *Message) GetUser() int {
 	return m.From.Id
 }
+
+func (m *Message) IsCommand() bool {
+	switch *m.Text {
+	case string(Start):
+		return true
+	}
+	return false
+}
+
+type ChatCommand string
+
+const (
+	Start ChatCommand = "/start"
+)
