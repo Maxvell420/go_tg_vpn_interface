@@ -5,17 +5,19 @@ import (
 )
 
 type TelegramBot struct {
-	BotToken *string
-	Lib      *telegram.Request
+	BotToken        *string
+	Lib             *telegram.Request
+	KeyboardService *KeyboardService
 }
 
 // Вероятно тут будет логирование
-func (s *TelegramBot) SendPost(req telegram.PostRequest) {
+func (s *TelegramBot) sendPost(req telegram.PostRequest) {
 	s.Lib.SendPost(req)
 }
 
-// Вероятно потом тут будет структура с найстройками
-func (s *TelegramBot) BuildMessage(chat_id int, message string) telegram.PostRequest {
-	tg_req := telegram.Message{ChatID: chat_id, Text: message}
-	return telegram.PostRequest{Method: telegram.SendMessage, Message: &tg_req}
+func (s *TelegramBot) SendTelegramStartMessage(chat_id int) {
+	keyboard := s.KeyboardService.GetStartKeyboard()
+	message := telegram.Message{ChatID: chat_id, Text: "Приветствую", Reply_markup: &keyboard}
+	req := telegram.PostRequest{Method: telegram.SendMessage, Message: &message}
+	s.sendPost(req)
 }

@@ -3,9 +3,12 @@ package telegram
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+
+	// "fmt"
 	"io"
 	"net/http"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 type Request struct {
@@ -37,7 +40,7 @@ func (r *Request) SendGet(data GetRequest) string {
 func (r *Request) SendPost(data PostRequest) string {
 	url := "https://api.telegram.org/bot" + *r.BotToken + "/" + string(data.Method)
 	jsonData, err := json.Marshal(data.Message)
-	fmt.Println(jsonData)
+	spew.Dump(string(jsonData))
 	if err != nil {
 		// обработать ошибки
 	}
@@ -46,6 +49,7 @@ func (r *Request) SendPost(data PostRequest) string {
 	}
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
+	spew.Dump(string(body))
 	return string(body)
 }
 

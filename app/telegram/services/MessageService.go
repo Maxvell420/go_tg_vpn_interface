@@ -30,6 +30,8 @@ func (s *MessageService) HandleRegularMessage(update updates.Message) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	// Перенести это все в outworld
 	message := telegram.Message{
 		ChatID: *user.Tg_id, Text: "Это текст заглушка",
 	}
