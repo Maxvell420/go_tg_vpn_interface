@@ -9,3 +9,4 @@ type UserChannel struct {
 	Update    *updates.Update
 	Ch        *chan *updates.Update
 }
+
