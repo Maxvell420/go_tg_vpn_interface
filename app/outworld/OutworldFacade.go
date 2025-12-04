@@ -2,6 +2,7 @@ package outworld
 
 import (
 	"GO/app/core"
+	"GO/app/libs/3xui"
 	"GO/app/libs/telegram"
 	"GO/app/outworld/services"
 )
@@ -33,4 +34,8 @@ func (f *OutworldFacade) buildTelegramLib() *telegram.Request {
 
 func (f *OutworldFacade) buildKeyboardService() *services.KeyboardService {
 	return &services.KeyboardService{}
+}
+
+func (f *OutworldFacade) buildXuiLib() *xui.Request {
+	return &xui.Request{Host: *f.Cntx.GetSecrets().XuiHost, Hash: *f.Cntx.GetSecrets().XuiHash, Port: *f.Cntx.GetSecrets().XuiPort, XuiUser: *f.Cntx.GetSecrets().XuiUser, XuiPass: *f.Cntx.GetSecrets().XuiPass}
 }

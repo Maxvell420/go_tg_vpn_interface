@@ -30,6 +30,12 @@ func (c *Context) GetSecrets() *Secrets {
 		botToken := os.Getenv("bot_token")
 		secrets := Secrets{BotToken: &botToken}
 		c.secrets = &secrets
+		xuiHost := os.Getenv("xui_host")
+		xuiHash := os.Getenv("xui_hash")
+		xuiPort := os.Getenv("xui_port")
+		secrets.XuiHost = &xuiHost
+		secrets.XuiHash = &xuiHash
+		secrets.XuiPort = &xuiPort
 	}
 	return c.secrets
 }

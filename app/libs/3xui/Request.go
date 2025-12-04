@@ -10,13 +10,17 @@ import (
 type Request struct {
 	Cookie     string
 	CookieTime int
-	Url        string
+	Hash       string
+	Port       string
+	Host       string
+	XuiUser    string
+	XuiPass    string
 }
 
 func (r *Request) SendPost(req VpnRequest) string {
 	path := req.GetPath()
 	data := req.ToJson()
-	url := r.Url + path
+	url := r.Host + ":" + r.Port + "/" + r.Hash + "/" + path
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(data))
 	if err != nil {
 	}
