@@ -22,6 +22,11 @@ func (f *TelegramFacade) HandleMyChatMemberUpdate(update updates.MyChatMember) {
 	service.HandleMyChatMemberUpdate(update)
 }
 
+func (f *TelegramFacade) HandleCallbackQuery(update updates.CallbackQuery) {
+	service := f.buildCallbackQueryService()
+	service.HandleCallbackQuery(update)
+}
+
 func (f *TelegramFacade) buildOutworldFacade() *outworld.OutworldFacade {
 	return &outworld.OutworldFacade{Cntx: f.Cntx}
 }
@@ -43,4 +48,8 @@ func (f *TelegramFacade) buildMyChatMemberService() *services.MyChatMemberServic
 
 func (f *TelegramFacade) buildCommandService() *services.CommandService {
 	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.buildOutworldFacade()}
+}
+
+func (f *TelegramFacade) buildCallbackQueryService() *services.CallbackQueryService {
+	return &services.CallbackQueryService{OutworldFacade: f.buildOutworldFacade()}
 }

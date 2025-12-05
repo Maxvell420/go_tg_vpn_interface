@@ -14,7 +14,7 @@ func (s *KeyboardService) GetStartKeyboard() telegram.ReplyMarkup {
 	var buttonsMap [][]telegram.Button
 	text := string(telegram.Statistic)
 	// Предполагаю что таким образом буду билдить callback data через функцию
-	CallbackButtonData := s.buildCallbackData(types.Start, 0)
+	CallbackButtonData := s.buildCallbackData(types.Inbounds, 0)
 	button := telegram.Button{Text: &text, Callback_data: CallbackButtonData}
 	buttons = append(buttons, button)
 	buttonsMap = append(buttonsMap, buttons)

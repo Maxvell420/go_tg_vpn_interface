@@ -3,5 +3,5 @@ package types
 type Command string
 
 const (
-	Start Command = "start"
+	Inbounds Command = "Inbounds"
 )

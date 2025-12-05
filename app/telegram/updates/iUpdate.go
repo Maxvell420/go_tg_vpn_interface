@@ -16,8 +16,9 @@ type UserUpdate interface {
 type UpdateType int
 
 const (
-	MessageType      UpdateType = 1
-	MyChatMemberType UpdateType = 2
+	MessageType       UpdateType = 1
+	MyChatMemberType  UpdateType = 2
+	CallbackQueryType UpdateType = 3
 )
 
 type GetUpdateType interface {
