@@ -4,6 +4,7 @@ type Update struct {
 	Update_id      int
 	Message        *Message
 	My_chat_member *MyChatMember
+	Callback_query *CallbackQuery
 	// Добавить сюда все остальные типы
 }
 
@@ -30,6 +31,10 @@ func (u *Update) GetMyChatMember() *MyChatMember {
 	return u.My_chat_member
 }
 
+func (u *Update) GetCallbackQuery() *CallbackQuery {
+	return u.Callback_query
+}
+
 func (u *Update) GetUserId() int {
 	update_type := u.GetUpdateType()
 
@@ -38,6 +43,8 @@ func (u *Update) GetUserId() int {
 		return u.Message.GetUser()
 	case MyChatMemberType:
 		return u.My_chat_member.GetUser()
+	case CallbackQueryType:
+		return u.Callback_query.GetUser()
 	}
 	panic(1)
 }

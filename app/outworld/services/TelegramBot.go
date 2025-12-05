@@ -21,3 +21,5 @@ func (s *TelegramBot) SendTelegramStartMessage(chat_id int) {
 	req := telegram.PostRequest{Method: telegram.SendMessage, Message: &message}
 	s.sendPost(req)
 }
+
+// Реализовать функцию прячущую в телегу сообщение с inline keyboard

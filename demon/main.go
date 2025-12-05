@@ -71,6 +71,8 @@ func handleUpdate(channel *chan *updates.Update, Context *core.Context) {
 			facade.HandleMessageUpdate(*item.GetMessage())
 		case updates.MyChatMemberType:
 			facade.HandleMyChatMemberUpdate(*item.GetMyChatMember())
+		case updates.CallbackQueryType:
+			facade.HandleCallbackQuery(*item.GetCallbackQuery())
 		}
 	}
 }

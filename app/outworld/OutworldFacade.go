@@ -22,6 +22,11 @@ func (f *OutworldFacade) SendTelegramStartMessage(chat_id int) {
 	service.SendTelegramStartMessage(chat_id)
 }
 
+func (f *OutworldFacade) SendInboundsMessage(chat_id int) {
+	service := f.buildTelegramBotService()
+	service.SendInboundsMessage(chat_id)
+}
+
 func (f *OutworldFacade) buildTelegramBotService() services.TelegramBot {
 	token := f.Cntx.GetSecrets().BotToken
 	return services.TelegramBot{BotToken: token, Lib: f.buildTelegramLib(), KeyboardService: f.buildKeyboardService()}
