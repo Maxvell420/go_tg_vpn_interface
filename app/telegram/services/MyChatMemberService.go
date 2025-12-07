@@ -1,19 +1,20 @@
 package services
 
 import (
-	"GO/app/telegram/repositories"
+	"GO/app/domain/User/Models"
+	"GO/app/domain/User/Repositories"
 	"GO/app/telegram/updates"
 )
 
 type MyChatMemberService struct {
-	UserRepository repositories.UserRepository
+	UserRepository Repositories.UserRepository
 }
 
 func (s *MyChatMemberService) HandleMyChatMemberUpdate(update updates.MyChatMember) {
 	user_id := update.GetUser()
 	user, err := s.UserRepository.GetByTgID(user_id)
 	if err != nil {
-		user = user.FromData(update.GetUser(), update.From.Username, "no", "no")
+		user = &Models.User{Tg_id: &user_id, User_name: update.From.Username, Kicked: "no", Is_admin: "no"}
 	}
 
 	user.UpdateStatus(update.GetNewStatus())

@@ -5,11 +5,15 @@ import (
 	"os"
 
 	"GO/app/core/database"
+	"GO/app/libs/3xui"
+	"GO/app/libs/telegram"
 )
 
 type Context struct {
-	db      *database.Mysql
-	secrets *Secrets
+	db              *database.Mysql
+	xuiRequest      *xui.Request
+	telegramRequest *telegram.Request
+	secrets         *Secrets
 }
 
 func (c *Context) GetDb() *sql.DB {
@@ -38,4 +42,18 @@ func (c *Context) GetSecrets() *Secrets {
 		secrets.XuiPort = &xuiPort
 	}
 	return c.secrets
+}
+
+func (c *Context) Get3xuiRequest() *xui.Request {
+	if c.xuiRequest == nil {
+		c.xuiRequest = &xui.Request{Host: os.Getenv("xui_host"), Hash: os.Getenv("xui_hash"), Port: os.Getenv("xui_port"), XuiUser: os.Getenv("xui_user"), XuiPass: os.Getenv("xui_pass")}
+	}
+	return c.xuiRequest
+}
+
+func (c *Context) GetTelegramRequest() *telegram.Request {
+	if c.telegramRequest == nil {
+		c.telegramRequest = &telegram.Request{BotToken: c.secrets.BotToken}
+	}
+	return c.telegramRequest
 }

@@ -1,10 +1,4 @@
-package models
-
-import (
-	"database/sql"
-
-	"GO/app/telegram/updates"
-)
+package Models
 
 type User struct {
 	Id        *int
@@ -14,11 +8,15 @@ type User struct {
 	Is_admin  string
 }
 
-func (u *User) FromDB(row *sql.Row) (User, error) {
-	var user User
-	err := row.Scan(&user.Id, &user.Tg_id, &user.User_name, &user.Kicked, &user.Is_admin)
-	return user, err
-}
+type ChatStatus string
+
+const (
+	Administrator ChatStatus = "administrator"
+	Member        ChatStatus = "member"
+	Restricted    ChatStatus = "restricted"
+	Left          ChatStatus = "left"
+	Kicked        ChatStatus = "kicked"
+)
 
 func (u *User) FromData(
 	Tg_id int,
@@ -30,8 +28,8 @@ func (u *User) FromData(
 	return user
 }
 
-func (u *User) UpdateStatus(status updates.ChatStatus) {
-	if status == updates.Kicked {
+func (u *User) UpdateStatus(status ChatStatus) {
+	if status == Kicked {
 		u.Kicked = "yes"
 	} else {
 		u.Kicked = "no"
@@ -56,4 +54,16 @@ func (u *User) IsKicked() bool {
 
 func (u *User) IsAdmin() bool {
 	return u.Is_admin == "yes"
+}
+
+func (u *User) GetUserName() *string {
+	return u.User_name
+}
+
+func (u *User) GetKicked() string {
+	return u.Kicked
+}
+
+func (u *User) GetAdmin() string {
+	return u.Is_admin
 }
