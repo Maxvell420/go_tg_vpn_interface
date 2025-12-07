@@ -4,8 +4,8 @@ import (
 	"GO/app/libs/telegram"
 )
 
+// Этот сервис отвечает за отправку сообщений в телегу
 type TelegramBot struct {
-	BotToken        *string
 	Lib             *telegram.Request
 	KeyboardService *KeyboardService
 }

@@ -1,11 +1,11 @@
 package updates
 
 type CallbackQuery struct {
-	Id            int
-	From          From
-	Message       Message
-	Chat_instance Chat
-	Data          string
+	Id      string
+	From    From
+	Message Message
+	Chat    Chat
+	Data    string
 }
 
 func (m *CallbackQuery) GetUser() int {

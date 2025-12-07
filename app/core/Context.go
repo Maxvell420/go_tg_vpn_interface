@@ -7,6 +7,8 @@ import (
 	"GO/app/core/database"
 	"GO/app/libs/3xui"
 	"GO/app/libs/telegram"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 type Context struct {
@@ -32,27 +34,33 @@ func (c *Context) GetDb() *sql.DB {
 func (c *Context) GetSecrets() *Secrets {
 	if c.secrets == nil {
 		botToken := os.Getenv("bot_token")
-		secrets := Secrets{BotToken: &botToken}
-		c.secrets = &secrets
 		xuiHost := os.Getenv("xui_host")
 		xuiHash := os.Getenv("xui_hash")
 		xuiPort := os.Getenv("xui_port")
-		secrets.XuiHost = &xuiHost
-		secrets.XuiHash = &xuiHash
-		secrets.XuiPort = &xuiPort
+		xuiUser := os.Getenv("xui_user")
+		xuiPass := os.Getenv("xui_pass")
+		secrets := Secrets{BotToken: &botToken, XuiHost: &xuiHost, XuiHash: &xuiHash, XuiPort: &xuiPort, XuiUser: &xuiUser, XuiPass: &xuiPass}
+		c.secrets = &secrets
 	}
+	spew.Dump(c.secrets)
 	return c.secrets
 }
 
 func (c *Context) Get3xuiRequest() *xui.Request {
 	if c.xuiRequest == nil {
-		c.xuiRequest = &xui.Request{Host: os.Getenv("xui_host"), Hash: os.Getenv("xui_hash"), Port: os.Getenv("xui_port"), XuiUser: os.Getenv("xui_user"), XuiPass: os.Getenv("xui_pass")}
+		if c.secrets == nil {
+			c.GetSecrets()
+		}
+		c.xuiRequest = &xui.Request{Host: *c.secrets.XuiHost, Hash: *c.secrets.XuiHash, Port: *c.secrets.XuiPort, XuiUser: *c.secrets.XuiUser, XuiPass: *c.secrets.XuiPass}
 	}
 	return c.xuiRequest
 }
 
 func (c *Context) GetTelegramRequest() *telegram.Request {
 	if c.telegramRequest == nil {
+		if c.secrets == nil {
+			c.GetSecrets()
+		}
 		c.telegramRequest = &telegram.Request{BotToken: c.secrets.BotToken}
 	}
 	return c.telegramRequest

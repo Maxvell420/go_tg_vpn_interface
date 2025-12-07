@@ -6,19 +6,16 @@ import (
 
 type VpnRequest interface {
 	ToJson() []byte
-	GetPath() string
+	GetMethod() string
 }
 
-type LoginRequest struct {
-	Username string
-	Password string
-}
-
-func (r *LoginRequest) getPath() string {
-	return "/login"
-}
+type LoginRequest struct{}
 
 func (r *LoginRequest) ToJson() []byte {
 	json, _ := json.Marshal(*r)
 	return json
+}
+
+func (r *LoginRequest) GetMethod() string {
+	return "login"
 }

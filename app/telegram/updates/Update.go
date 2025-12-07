@@ -13,6 +13,8 @@ func (u *Update) GetUpdateType() UpdateType {
 		return MessageType
 	} else if u.My_chat_member != nil {
 		return MyChatMemberType
+	} else if u.Callback_query != nil {
+		return CallbackQueryType
 	}
 
 	// Добавить все остальные

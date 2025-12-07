@@ -34,12 +34,12 @@ func (s *CallbackQueryService) HandleCallbackQuery(update updates.CallbackQuery)
 
 	switch action {
 	case string(updates.Inbounds):
-		s.HandleInbounds(data)
+		s.HandleInbounds(update.GetUser(), data)
 	default:
 		panic(1)
 	}
 }
 
-func (s *CallbackQueryService) HandleInbounds(data string) {
-	// fmt.Println("Inbounds: ", data)
+func (s *CallbackQueryService) HandleInbounds(chat_id int, data string) {
+	s.OutworldFacade.GetInbounds(chat_id)
 }

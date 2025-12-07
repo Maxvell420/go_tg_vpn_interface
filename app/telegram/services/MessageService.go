@@ -9,6 +9,8 @@ import (
 	"GO/app/telegram/updates"
 )
 
+// TODO: Вообще если логика будет сложнее то лучше будет вынести это в отдельный сервис как и все сервисы телеграмма и избавиться от параметров функций в виде апдейтов телеги т.к. это нарушение направления домена
+// TODO: Добавить логику для обработки обычных сообщений
 type MessageService struct {
 	UserRepo        *Repositories.UserRepository
 	OutworldFacade  *outworld.OutworldFacade
