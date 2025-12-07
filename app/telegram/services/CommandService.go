@@ -3,13 +3,13 @@ package services
 import (
 	"fmt"
 
+	"GO/app/domain/User/Repositories"
 	"GO/app/outworld"
-	"GO/app/telegram/repositories"
 	"GO/app/telegram/updates"
 )
 
 type CommandService struct {
-	UserRepository *repositories.UserRepository
+	UserRepository *Repositories.UserRepository
 	OutworldFacade *outworld.OutworldFacade
 }
 
@@ -19,5 +19,5 @@ func (s *CommandService) HandleCommand(update updates.Message) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	s.OutworldFacade.SendTelegramStartMessage(*user.Tg_id)
+	s.OutworldFacade.SendTelegramStartMessage(*user.GetTgId())
 }

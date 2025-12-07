@@ -2,8 +2,8 @@ package telegram
 
 import (
 	"GO/app/core"
+	"GO/app/domain/User/Repositories"
 	"GO/app/outworld"
-	"GO/app/telegram/repositories"
 	"GO/app/telegram/services"
 	"GO/app/telegram/updates"
 )
@@ -31,8 +31,8 @@ func (f *TelegramFacade) buildOutworldFacade() *outworld.OutworldFacade {
 	return &outworld.OutworldFacade{Cntx: f.Cntx}
 }
 
-func (f *TelegramFacade) buildUserRepository() *repositories.UserRepository {
-	repo := repositories.UserRepository{Db: f.Cntx.GetDb()}
+func (f *TelegramFacade) buildUserRepository() *Repositories.UserRepository {
+	repo := Repositories.UserRepository{Db: f.Cntx.GetDb()}
 	return &repo
 }
 

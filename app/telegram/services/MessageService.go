@@ -3,14 +3,14 @@ package services
 import (
 	"fmt"
 
+	"GO/app/domain/User/Repositories"
 	"GO/app/libs/telegram"
 	"GO/app/outworld"
-	"GO/app/telegram/repositories"
 	"GO/app/telegram/updates"
 )
 
 type MessageService struct {
-	UserRepo        *repositories.UserRepository
+	UserRepo        *Repositories.UserRepository
 	OutworldFacade  *outworld.OutworldFacade
 	CommandsHandler *CommandService
 }
@@ -33,7 +33,7 @@ func (s *MessageService) HandleRegularMessage(update updates.Message) {
 
 	// Перенести это все в outworld
 	message := telegram.Message{
-		ChatID: *user.Tg_id, Text: "Это текст заглушка",
+		ChatID: *user.GetTgId(), Text: "Это текст заглушка",
 	}
 
 	data := telegram.PostRequest{
