@@ -1,6 +1,9 @@
 package services
 
-import "GO/app/libs/3xui"
+import (
+	"GO/app/libs/3xui"
+	"github.com/davecgh/go-spew/spew"
+)
 
 // Этот сервис отвечает за взаимодействие с xui
 type XuiService struct {
@@ -9,7 +12,9 @@ type XuiService struct {
 
 func (s *XuiService) GetInbounds() {
 	var req xui.VpnRequest
-	req = &xui.LoginRequest{}
+	req = &xui.XuiRequest{Method: xui.Inbounds}
 
-	s.Request.SendPost(req)
+	body := s.Request.SendPost(req)
+	response := body.(xui.ListResponse)
+	spew.Dump(response)
 }

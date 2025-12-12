@@ -6,16 +6,47 @@ import (
 
 type VpnRequest interface {
 	ToJson() []byte
-	GetMethod() string
+	GetMethod() XuiPath
 }
 
-type LoginRequest struct{}
+type XuiRequest struct {
+	Method XuiPath
+}
 
-func (r *LoginRequest) ToJson() []byte {
+func (r *XuiRequest) ToJson() []byte {
 	json, _ := json.Marshal(*r)
 	return json
 }
 
-func (r *LoginRequest) GetMethod() string {
-	return "login"
+func (r *XuiRequest) GetMethod() XuiPath {
+	return r.Method
+}
+
+type VpnResponse interface{}
+
+type XuiPath string
+
+const (
+	Inbounds XuiPath = "panel/api/inbounds/list"
+)
+
+type ListResponse struct {
+	Success bool
+	Obj     []ListObj `json:"obj"`
+}
+
+type ListObj struct {
+	Up          int                  `json:"up"`
+	Down        int                  `json:"down"`
+	Total       int                  `json:"total"`
+	AllTime     int                  `json:"allTime"`
+	ClientStats []ListObjClientStats `json:"clientStats"`
+}
+
+type ListObjClientStats struct {
+	Email      string `json:"email"`
+	Up         int    `json:"up"`
+	Down       int    `json:"down"`
+	AllTime    int    `json:"allTime"`
+	LastOnline int    `json:"lastOnline"`
 }

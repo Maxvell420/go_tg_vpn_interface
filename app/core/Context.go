@@ -7,8 +7,6 @@ import (
 	"GO/app/core/database"
 	"GO/app/libs/3xui"
 	"GO/app/libs/telegram"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 type Context struct {
@@ -42,7 +40,6 @@ func (c *Context) GetSecrets() *Secrets {
 		secrets := Secrets{BotToken: &botToken, XuiHost: &xuiHost, XuiHash: &xuiHash, XuiPort: &xuiPort, XuiUser: &xuiUser, XuiPass: &xuiPass}
 		c.secrets = &secrets
 	}
-	spew.Dump(c.secrets)
 	return c.secrets
 }
 
