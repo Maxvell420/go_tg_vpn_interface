@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
 )
@@ -21,32 +22,49 @@ type Request struct {
 	Mutex      sync.Mutex
 }
 
-func (r *Request) SendPost(req VpnRequest) string {
-	if r.Cookie == "" {
+func (r *Request) SendPost(req VpnRequest) (response VpnResponse) {
+	if r.Cookie == "" || r.CookieTime < int(time.Now().Unix()) {
 		r.requestCookie()
 	}
-	// path := req.GetMethod()
-	// data := req.ToJson()
-	// url := r.Host + ":" + r.Port + "/" + r.Hash + "/" + path
-	// spew.Dump(url)
-	// resp, err := http.Post(url, "application/json", bytes.NewBuffer(data))
-	// spew.Dump(err)
-	// if err != nil {
-	// }
+	path := string(req.GetMethod())
+	url := r.Host + ":" + r.Port + "/" + r.Hash + "/" + path
+	http_req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		// обработать
+	}
 
-	// defer resp.Body.Close()
-	// body, _ := io.ReadAll(resp.Body)
-	// spew.Dump(string(body))
-	// spew.Dump(resp.Cookies())
-	// // тут преобразовывать в структуру
-	// return string(body)
-	return ""
+	http_req.Header.Add("Cookie", "3x-ui="+r.Cookie)
+
+	http_client := &http.Client{}
+	resp, err := http_client.Do(http_req)
+	if err != nil {
+		// обработать
+	}
+
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	return r.buildResultBody(body, XuiPath(req.GetMethod()))
+}
+
+func (r *Request) buildResultBody(data []byte, request XuiPath) (response VpnResponse) {
+	switch request {
+	case Inbounds:
+		var body ListResponse
+
+		err := json.Unmarshal(data, &body)
+		if err != nil {
+			spew.Dump(err)
+		}
+		return body
+	}
+
+	panic(1)
 }
 
 func (r *Request) requestCookie() {
 	r.Mutex.Lock()
 	defer r.Mutex.Unlock()
-	if r.Cookie != "" {
+	if r.CookieTime != 0 && r.CookieTime < int(time.Now().Unix()) {
 		return
 	}
 	data := map[string]string{
@@ -60,15 +78,16 @@ func (r *Request) requestCookie() {
 	url := r.Host + ":" + r.Port + "/" + r.Hash + "/login"
 
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
-	spew.Dump(err)
 	if err != nil {
 	}
-	// Дописать либу распарсить куки и записывать их в структуру как и время протухания
 
 	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
-	spew.Dump(string(body))
-	spew.Dump(resp.Cookies())
-	r.Cookie = "1"
-	// тут преобразовывать в структуру
+
+	for _, cookie := range resp.Cookies() {
+		spew.Dump(cookie.Name)
+		if cookie.Name == "3x-ui" {
+			r.Cookie = cookie.Value
+			r.CookieTime = int(cookie.Expires.Unix())
+		}
+	}
 }
