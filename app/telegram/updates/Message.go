@@ -14,9 +14,10 @@ func (m *Message) GetUser() int {
 }
 
 func (m *Message) IsCommand() bool {
-	switch *m.Text {
-	case string(Start):
-		return true
+	for _, entity := range m.Entities {
+		if entity.Type == "bot_command" {
+			return true
+		}
 	}
 	return false
 }

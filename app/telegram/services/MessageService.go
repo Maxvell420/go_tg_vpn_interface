@@ -7,6 +7,7 @@ import (
 	"GO/app/libs/telegram"
 	"GO/app/outworld"
 	"GO/app/telegram/updates"
+	"github.com/davecgh/go-spew/spew"
 )
 
 // TODO: Вообще если логика будет сложнее то лучше будет вынести это в отдельный сервис как и все сервисы телеграмма и избавиться от параметров функций в виде апдейтов телеги т.к. это нарушение направления домена
@@ -19,6 +20,7 @@ type MessageService struct {
 
 func (s *MessageService) HandleMessageUpdate(update updates.Message) {
 	// Думаю тут будет поиск стейтов
+	spew.Dump(update.IsCommand())
 	if update.IsCommand() {
 		s.CommandsHandler.HandleCommand(update)
 	} else {
