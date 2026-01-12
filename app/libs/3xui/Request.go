@@ -84,7 +84,7 @@ func (r *Request) requestCookie() {
 	defer resp.Body.Close()
 
 	for _, cookie := range resp.Cookies() {
-		spew.Dump(cookie.Name)
+		// spew.Dump(cookie.Name)
 		if cookie.Name == "3x-ui" {
 			r.Cookie = cookie.Value
 			r.CookieTime = int(cookie.Expires.Unix())

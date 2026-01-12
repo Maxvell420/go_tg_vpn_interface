@@ -12,6 +12,7 @@ import (
 
 func main() {
 	var Context core.Context
+	db := Context.GetDb()
 	godotenv.Load("../.env")
 	sql := `CREATE TABLE IF NOT EXISTS
   users (
@@ -25,7 +26,25 @@ func main() {
     PRIMARY KEY (id)
   ) ENGINE = InnoDB AUTO_INCREMENT = 3 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
 
-	db := Context.GetDb()
+	runSql(sql, db)
+
+	sql = `CREATE TABLE IF NOT EXISTS
+  		referal_links (
+    id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    hash varchar(255) NOT NULL UNIQUE,
+    tg_id bigint unsigned NOT NULL,
+    PRIMARY KEY (id)
+  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
+
+	sql = `CREATE TABLE IF NOT EXISTS
+  referal_users (
+    id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    tg_id bigint unsigned NOT NULL,
+    owner_tg_id bigint unsigned NOT NULL,
+    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
+
 	runSql(sql, db)
 }
 

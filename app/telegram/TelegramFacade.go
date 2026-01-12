@@ -36,6 +36,16 @@ func (f *TelegramFacade) buildUserRepository() *Repositories.UserRepository {
 	return &repo
 }
 
+func (f *TelegramFacade) buildReferalLinkRepository() *Repositories.ReferalLinkRepository {
+	repo := Repositories.ReferalLinkRepository{Db: f.Cntx.GetDb()}
+	return &repo
+}
+
+func (f *TelegramFacade) buildReferalUserRepository() *Repositories.ReferalUserRepository {
+	repo := Repositories.ReferalUserRepository{Db: f.Cntx.GetDb()}
+	return &repo
+}
+
 func (f *TelegramFacade) buildMessageService() *services.MessageService {
 	repo := f.buildUserRepository()
 	service := services.MessageService{UserRepo: repo, OutworldFacade: f.buildOutworldFacade(), CommandsHandler: f.buildCommandService()}
@@ -47,7 +57,7 @@ func (f *TelegramFacade) buildMyChatMemberService() *services.MyChatMemberServic
 }
 
 func (f *TelegramFacade) buildCommandService() *services.CommandService {
-	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.buildOutworldFacade()}
+	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.buildOutworldFacade(), ReferalLinkRepository: f.buildReferalLinkRepository(), ReferalUserRepository: f.buildReferalUserRepository()}
 }
 
 func (f *TelegramFacade) buildCallbackQueryService() *services.CallbackQueryService {
