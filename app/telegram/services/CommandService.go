@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"GO/app/domain/User/Repositories"
@@ -42,4 +41,5 @@ func (s *CommandService) HandleStartCommand(update updates.Message) {
 
 func (s *CommandService) HandleRefLinkCommand(update updates.Message) {
 	link := s.ReferalService.GetUserRefLink(update.GetUser())
+	s.OutworldFacade.SendTelegramRefLinkMessage(update.GetUser(), link)
 }

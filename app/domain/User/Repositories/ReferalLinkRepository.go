@@ -21,9 +21,9 @@ func (r *ReferalLinkRepository) Persist(link Models.ReferalLink) (Models.Referal
 	var sql string
 	var err error
 
-	if r.Model.GetID() != nil {
+	if link.GetID() != nil {
 		sql = "UPDATE referal_links SET hash = ?, tg_id = ? WHERE id = ?"
-		_, err = r.Db.Exec(sql, link.GetHash(), link.GetTgId(), r.Model.GetID())
+		_, err = r.Db.Exec(sql, link.GetHash(), link.GetTgId(), link.GetID())
 	} else {
 		sql = "INSERT INTO referal_links(hash, tg_id) VALUES (?, ?)"
 		_, err = r.Db.Exec(sql, link.GetHash(), link.GetTgId())
