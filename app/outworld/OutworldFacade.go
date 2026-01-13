@@ -23,6 +23,11 @@ func (f *OutworldFacade) SendTelegramStartMessage(chat_id int) {
 	service.SendTelegramStartMessage(chat_id)
 }
 
+func (f *OutworldFacade) SendTelegramRefLinkMessage(chat_id int, link string) {
+	service := f.buildTelegramBotService()
+	service.SendTelegramRefLinkMessage(chat_id, link)
+}
+
 func (f *OutworldFacade) GetInbounds(chat_id int) {
 	manager := f.buildOutworldManager()
 	manager.GetInbounds(chat_id)

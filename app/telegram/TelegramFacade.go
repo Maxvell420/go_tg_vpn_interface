@@ -57,9 +57,13 @@ func (f *TelegramFacade) buildMyChatMemberService() *services.MyChatMemberServic
 }
 
 func (f *TelegramFacade) buildCommandService() *services.CommandService {
-	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.buildOutworldFacade(), ReferalLinkRepository: f.buildReferalLinkRepository(), ReferalUserRepository: f.buildReferalUserRepository()}
+	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.buildOutworldFacade(), ReferalService: f.buildReferalService()}
 }
 
 func (f *TelegramFacade) buildCallbackQueryService() *services.CallbackQueryService {
 	return &services.CallbackQueryService{OutworldFacade: f.buildOutworldFacade()}
+}
+
+func (f *TelegramFacade) buildReferalService() *services.ReferalService {
+	return &services.ReferalService{UserRepository: f.buildUserRepository(), ReferalLinkRepository: f.buildReferalLinkRepository(), ReferalUserRepository: f.buildReferalUserRepository()}
 }

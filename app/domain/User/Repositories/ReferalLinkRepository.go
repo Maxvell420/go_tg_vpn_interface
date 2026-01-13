@@ -21,9 +21,9 @@ func (r *ReferalLinkRepository) Persist(link Models.ReferalLink) (Models.Referal
 	var sql string
 	var err error
 
-	if r.Model.GetID() != nil {
+	if link.GetID() != nil {
 		sql = "UPDATE referal_links SET hash = ?, tg_id = ? WHERE id = ?"
-		_, err = r.Db.Exec(sql, link.GetHash(), link.GetTgId(), r.Model.GetID())
+		_, err = r.Db.Exec(sql, link.GetHash(), link.GetTgId(), link.GetID())
 	} else {
 		sql = "INSERT INTO referal_links(hash, tg_id) VALUES (?, ?)"
 		_, err = r.Db.Exec(sql, link.GetHash(), link.GetTgId())
@@ -41,6 +41,20 @@ func (r *ReferalLinkRepository) GetByHash(hash string) (Models.ReferalLink, erro
 	link, err := r.buildReferalLinkModel(row)
 
 	return link, err
+}
+
+func (r *ReferalLinkRepository) GetByTgId(tg_id int) (Models.ReferalLink, error) {
+	var sql string
+	var err error
+
+	sql = "SELECT id, hash, tg_id FROM referal_links WHERE tg_id = ?"
+	row := r.Db.QueryRow(sql, tg_id)
+	link, err := r.buildReferalLinkModel(row)
+	return link, err
+}
+
+func (r *ReferalLinkRepository) BuildModel(hash string, tg_id int) Models.ReferalLink {
+	return Models.ReferalLink{Hash: &hash, Tg_id: &tg_id}
 }
 
 func (r *ReferalLinkRepository) buildReferalLinkModel(row *sql.Row) (Models.ReferalLink, error) {

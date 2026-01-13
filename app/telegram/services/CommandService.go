@@ -10,10 +10,9 @@ import (
 )
 
 type CommandService struct {
-	UserRepository        *Repositories.UserRepository
-	OutworldFacade        *outworld.OutworldFacade
-	ReferalLinkRepository *Repositories.ReferalLinkRepository
-	ReferalUserRepository *Repositories.ReferalUserRepository
+	UserRepository *Repositories.UserRepository
+	OutworldFacade *outworld.OutworldFacade
+	ReferalService *ReferalService
 }
 
 func (s *CommandService) HandleCommand(update updates.Message) {
@@ -21,23 +20,16 @@ func (s *CommandService) HandleCommand(update updates.Message) {
 	if strings.HasPrefix(*update.Text, string(updates.Start)) {
 		s.HandleStartCommand(update)
 	}
+
+	if *update.Text == string(updates.RefLink) {
+		s.HandleRefLinkCommand(update)
+	}
 }
 
 func (s *CommandService) HandleStartCommand(update updates.Message) {
 	if *update.Text != string(updates.Start) {
 		hash := strings.Replace(*update.Text, string(updates.Start)+" ", "", 1)
-		link, err := s.ReferalLinkRepository.GetByHash(hash)
-		if err == nil {
-			referal_user, err := s.ReferalUserRepository.GetByTgId(link.GetTgId())
-			if err != nil || *referal_user.GetID() != update.GetUser() {
-				user, err := s.UserRepository.GetByTgID(link.GetTgId())
-				if err == nil {
-					model := s.ReferalUserRepository.BuildModel(*user.GetTgId(), link.GetTgId())
-					_, err = s.ReferalUserRepository.Persist(model)
-				}
-			}
-
-		}
+		s.ReferalService.HandleStartReferal(update.GetUser(), hash)
 	}
 
 	user, err := s.UserRepository.GetByTgID(update.GetUser())
@@ -45,4 +37,9 @@ func (s *CommandService) HandleStartCommand(update updates.Message) {
 		fmt.Println(err)
 	}
 	s.OutworldFacade.SendTelegramStartMessage(*user.GetTgId())
+}
+
+func (s *CommandService) HandleRefLinkCommand(update updates.Message) {
+	link := s.ReferalService.GetUserRefLink(update.GetUser())
+	s.OutworldFacade.SendTelegramRefLinkMessage(update.GetUser(), link)
 }
