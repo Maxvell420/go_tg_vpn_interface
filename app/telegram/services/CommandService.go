@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"GO/app/domain/User/Repositories"
@@ -20,6 +21,10 @@ func (s *CommandService) HandleCommand(update updates.Message) {
 	if strings.HasPrefix(*update.Text, string(updates.Start)) {
 		s.HandleStartCommand(update)
 	}
+
+	if *update.Text == string(updates.RefLink) {
+		s.HandleRefLinkCommand(update)
+	}
 }
 
 func (s *CommandService) HandleStartCommand(update updates.Message) {
@@ -33,4 +38,8 @@ func (s *CommandService) HandleStartCommand(update updates.Message) {
 		fmt.Println(err)
 	}
 	s.OutworldFacade.SendTelegramStartMessage(*user.GetTgId())
+}
+
+func (s *CommandService) HandleRefLinkCommand(update updates.Message) {
+	link := s.ReferalService.GetUserRefLink(update.GetUser())
 }

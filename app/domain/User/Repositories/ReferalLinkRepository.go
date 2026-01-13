@@ -43,6 +43,20 @@ func (r *ReferalLinkRepository) GetByHash(hash string) (Models.ReferalLink, erro
 	return link, err
 }
 
+func (r *ReferalLinkRepository) GetByTgId(tg_id int) (Models.ReferalLink, error) {
+	var sql string
+	var err error
+
+	sql = "SELECT id, hash, tg_id FROM referal_links WHERE tg_id = ?"
+	row := r.Db.QueryRow(sql, tg_id)
+	link, err := r.buildReferalLinkModel(row)
+	return link, err
+}
+
+func (r *ReferalLinkRepository) BuildModel(hash string, tg_id int) Models.ReferalLink {
+	return Models.ReferalLink{Hash: &hash, Tg_id: &tg_id}
+}
+
 func (r *ReferalLinkRepository) buildReferalLinkModel(row *sql.Row) (Models.ReferalLink, error) {
 	var link Models.ReferalLink
 	err := row.Scan(&link.Id, &link.Hash, &link.Tg_id)

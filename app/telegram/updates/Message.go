@@ -25,5 +25,6 @@ func (m *Message) IsCommand() bool {
 type ChatCommand string
 
 const (
-	Start ChatCommand = "/start"
+	Start   ChatCommand = "/start"
+	RefLink ChatCommand = "/reflink"
 )
