@@ -46,7 +46,7 @@ func (s *ReferalService) generateLink(tg_user_id int) string {
 
 func (s *ReferalService) generateUserHash(tg_user_id int) string {
 	salt := os.Getenv("REF_LINK_SALT")
-	data := strconv.FormatInt(int64(tg_user_id), 10) + salt
+	data := salt + strconv.FormatInt(int64(tg_user_id), 10)
 
 	hash := sha256.Sum256([]byte(data))
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"GO/app/core"
 	"GO/app/telegram"
@@ -25,11 +26,19 @@ func main() {
 	godotenv.Load("../.env")
 	http.HandleFunc("/webhook", httpHandler)
 	UserChannels = make(map[int]entities.UserChannel)
-	jobsChannel = make(chan entities.Job)
+	jobsChannel = make(chan entities.Job, 10)
+	go createCronJobs(jobsChannel)
 	go handleJobs(jobsChannel)
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		spew.Dump(err)
+	}
+}
+
+func createCronJobs(jobsChannel chan entities.Job) {
+	ticker := time.NewTicker(1 * time.Minute)
+	for range ticker.C {
+		jobsChannel <- entities.Job{Type: entities.TrafficUsage}
 	}
 }
 
@@ -47,7 +56,9 @@ func handleJobs(jobsChannel chan entities.Job) {
 }
 
 func handleTrafficUsage(job entities.Job) {
-	spew.Dump(job)
+	// builder := telegram.TelegramBuilder{Cntx: &Context}
+	// facade := telegram.TelegramFacade{Builder: &builder}
+	// facade.HandleTrafficUsage(job)
 }
 
 func httpHandler(resp http.ResponseWriter, req *http.Request) {

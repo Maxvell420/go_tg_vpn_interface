@@ -42,6 +42,5 @@ func (s *CommandService) HandleStartCommand(update updates.Message) {
 
 func (s *CommandService) HandleRefLinkCommand(update updates.Message, jobsChannel chan entities.Job) {
 	link := s.ReferalService.GetUserRefLink(update.GetUser())
-	jobsChannel <- entities.Job{Type: entities.TrafficUsage, Data: &map[string]string{"link": link}, UserId: update.GetUser()}
 	s.OutworldFacade.SendTelegramRefLinkMessage(update.GetUser(), link)
 }

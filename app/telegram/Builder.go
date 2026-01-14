@@ -11,8 +11,8 @@ type TelegramBuilder struct {
 	Cntx *core.Context
 }
 
-func (f *TelegramBuilder) buildOutworldFacade() *outworld.OutworldFacade {
-	return &outworld.OutworldFacade{Cntx: f.Cntx}
+func (f *TelegramBuilder) BuildOutworldFacade() *outworld.OutworldFacade {
+	return &outworld.OutworldFacade{Builder: &outworld.Builder{Cntx: f.Cntx}}
 }
 
 func (f *TelegramBuilder) buildUserRepository() *Repositories.UserRepository {
@@ -32,7 +32,7 @@ func (f *TelegramBuilder) buildReferalUserRepository() *Repositories.ReferalUser
 
 func (f *TelegramBuilder) buildMessageService() *services.MessageService {
 	repo := f.buildUserRepository()
-	service := services.MessageService{UserRepo: repo, OutworldFacade: f.buildOutworldFacade(), CommandsHandler: f.buildCommandService()}
+	service := services.MessageService{UserRepo: repo, OutworldFacade: f.BuildOutworldFacade(), CommandsHandler: f.buildCommandService()}
 	return &service
 }
 
@@ -41,11 +41,11 @@ func (f *TelegramBuilder) buildMyChatMemberService() *services.MyChatMemberServi
 }
 
 func (f *TelegramBuilder) buildCommandService() *services.CommandService {
-	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.buildOutworldFacade(), ReferalService: f.buildReferalService()}
+	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.BuildOutworldFacade(), ReferalService: f.buildReferalService()}
 }
 
 func (f *TelegramBuilder) buildCallbackQueryService() *services.CallbackQueryService {
-	return &services.CallbackQueryService{OutworldFacade: f.buildOutworldFacade()}
+	return &services.CallbackQueryService{OutworldFacade: f.BuildOutworldFacade()}
 }
 
 func (f *TelegramBuilder) buildReferalService() *services.ReferalService {
