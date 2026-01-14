@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"GO/app/core"
+	"GO/app/domain/User"
 	"GO/app/domain/User/Repositories"
 	"GO/app/outworld"
 	"GO/app/telegram/services"
@@ -20,19 +21,8 @@ func (f *TelegramBuilder) buildUserRepository() *Repositories.UserRepository {
 	return &repo
 }
 
-func (f *TelegramBuilder) buildReferalLinkRepository() *Repositories.ReferalLinkRepository {
-	repo := Repositories.ReferalLinkRepository{Db: f.Cntx.GetDb()}
-	return &repo
-}
-
-func (f *TelegramBuilder) buildReferalUserRepository() *Repositories.ReferalUserRepository {
-	repo := Repositories.ReferalUserRepository{Db: f.Cntx.GetDb()}
-	return &repo
-}
-
 func (f *TelegramBuilder) buildMessageService() *services.MessageService {
-	repo := f.buildUserRepository()
-	service := services.MessageService{UserRepo: repo, OutworldFacade: f.BuildOutworldFacade(), CommandsHandler: f.buildCommandService()}
+	service := services.MessageService{UserFacade: f.buildUserFacade(), OutworldFacade: f.BuildOutworldFacade(), CommandsHandler: f.buildCommandService()}
 	return &service
 }
 
@@ -41,13 +31,13 @@ func (f *TelegramBuilder) buildMyChatMemberService() *services.MyChatMemberServi
 }
 
 func (f *TelegramBuilder) buildCommandService() *services.CommandService {
-	return &services.CommandService{UserRepository: f.buildUserRepository(), OutworldFacade: f.BuildOutworldFacade(), ReferalService: f.buildReferalService()}
+	return &services.CommandService{UserFacade: f.buildUserFacade(), OutworldFacade: f.BuildOutworldFacade()}
 }
 
 func (f *TelegramBuilder) buildCallbackQueryService() *services.CallbackQueryService {
 	return &services.CallbackQueryService{OutworldFacade: f.BuildOutworldFacade()}
 }
 
-func (f *TelegramBuilder) buildReferalService() *services.ReferalService {
-	return &services.ReferalService{UserRepository: f.buildUserRepository(), ReferalLinkRepository: f.buildReferalLinkRepository(), ReferalUserRepository: f.buildReferalUserRepository()}
+func (f *TelegramBuilder) buildUserFacade() *user.UserFacade {
+	return &user.UserFacade{Builder: &user.UserBuilder{Cntx: f.Cntx}}
 }

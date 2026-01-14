@@ -1,19 +1,17 @@
 package services
 
 import (
-	"fmt"
 	"strings"
 
-	"GO/app/domain/User/Repositories"
+	"GO/app/domain/User"
 	"GO/app/outworld"
 	"GO/app/telegram/entities"
 	"GO/app/telegram/updates"
 )
 
 type CommandService struct {
-	UserRepository *Repositories.UserRepository
 	OutworldFacade *outworld.OutworldFacade
-	ReferalService *ReferalService
+	UserFacade     *user.UserFacade
 }
 
 func (s *CommandService) HandleCommand(update updates.Message, jobsChannel chan entities.Job) {
@@ -30,17 +28,13 @@ func (s *CommandService) HandleCommand(update updates.Message, jobsChannel chan 
 func (s *CommandService) HandleStartCommand(update updates.Message) {
 	if *update.Text != string(updates.Start) {
 		hash := strings.Replace(*update.Text, string(updates.Start)+" ", "", 1)
-		s.ReferalService.HandleStartReferal(update.GetUser(), hash)
+		s.UserFacade.HandleStartReferal(update.GetUser(), hash)
 	}
 
-	user, err := s.UserRepository.GetByTgID(update.GetUser())
-	if err != nil {
-		fmt.Println(err)
-	}
-	s.OutworldFacade.SendTelegramStartMessage(*user.GetTgId())
+	s.OutworldFacade.SendTelegramStartMessage(update.GetUser())
 }
 
 func (s *CommandService) HandleRefLinkCommand(update updates.Message, jobsChannel chan entities.Job) {
-	link := s.ReferalService.GetUserRefLink(update.GetUser())
+	link := s.UserFacade.GetUserRefLink(update.GetUser())
 	s.OutworldFacade.SendTelegramRefLinkMessage(update.GetUser(), link)
 }
