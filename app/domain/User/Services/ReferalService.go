@@ -1,4 +1,4 @@
-package services
+package Services
 
 import (
 	"crypto/sha256"
@@ -7,8 +7,6 @@ import (
 	"strconv"
 
 	"GO/app/domain/User/Repositories"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 type ReferalService struct {
@@ -38,7 +36,6 @@ func (s *ReferalService) HandleStartReferal(tg_user_id int, referal_link_hash st
 func (s *ReferalService) generateLink(tg_user_id int) string {
 	hash := s.generateUserHash(tg_user_id)
 	link := s.ReferalLinkRepository.BuildModel(hash, tg_user_id)
-	spew.Dump(link)
 	link, _ = s.ReferalLinkRepository.Persist(link)
 
 	return link.GetHash()
@@ -46,7 +43,7 @@ func (s *ReferalService) generateLink(tg_user_id int) string {
 
 func (s *ReferalService) generateUserHash(tg_user_id int) string {
 	salt := os.Getenv("REF_LINK_SALT")
-	data := strconv.FormatInt(int64(tg_user_id), 10) + salt
+	data := salt + strconv.FormatInt(int64(tg_user_id), 10)
 
 	hash := sha256.Sum256([]byte(data))
 

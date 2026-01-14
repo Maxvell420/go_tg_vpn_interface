@@ -3,26 +3,25 @@ package services
 import (
 	"fmt"
 
-	"GO/app/domain/User/Repositories"
+	"GO/app/domain/User"
 	"GO/app/libs/telegram"
 	"GO/app/outworld"
+	"GO/app/telegram/entities"
 	"GO/app/telegram/updates"
-	"github.com/davecgh/go-spew/spew"
 )
 
 // TODO: Вообще если логика будет сложнее то лучше будет вынести это в отдельный сервис как и все сервисы телеграмма и избавиться от параметров функций в виде апдейтов телеги т.к. это нарушение направления домена
 // TODO: Добавить логику для обработки обычных сообщений
 type MessageService struct {
-	UserRepo        *Repositories.UserRepository
+	UserFacade      *user.UserFacade
 	OutworldFacade  *outworld.OutworldFacade
 	CommandsHandler *CommandService
 }
 
-func (s *MessageService) HandleMessageUpdate(update updates.Message) {
+func (s *MessageService) HandleMessageUpdate(update updates.Message, jobsChannel chan entities.Job) {
 	// Думаю тут будет поиск стейтов
-	spew.Dump(update.IsCommand())
 	if update.IsCommand() {
-		s.CommandsHandler.HandleCommand(update)
+		s.CommandsHandler.HandleCommand(update, jobsChannel)
 	} else {
 		s.HandleRegularMessage(update)
 	}
@@ -30,7 +29,7 @@ func (s *MessageService) HandleMessageUpdate(update updates.Message) {
 
 func (s *MessageService) HandleRegularMessage(update updates.Message) {
 	user_id := update.From.Id
-	user, err := s.UserRepo.GetByTgID(user_id)
+	user, err := s.UserFacade.GetUserByTgId(user_id)
 	if err != nil {
 		fmt.Println(err)
 	}

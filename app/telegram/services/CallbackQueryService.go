@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"GO/app/outworld"
+	"GO/app/telegram/entities"
 	"GO/app/telegram/updates"
 )
 
@@ -11,7 +12,7 @@ type CallbackQueryService struct {
 	OutworldFacade *outworld.OutworldFacade
 }
 
-func (s *CallbackQueryService) HandleCallbackQuery(update updates.CallbackQuery) {
+func (s *CallbackQueryService) HandleCallbackQuery(update updates.CallbackQuery, jobsChannel chan entities.Job) {
 	parts := strings.Split(update.Data, ";")
 
 	var action, data string
