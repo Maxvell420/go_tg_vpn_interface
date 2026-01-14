@@ -36,6 +36,8 @@ func main() {
     PRIMARY KEY (id)
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
 
+	runSql(sql, db)
+
 	sql = `CREATE TABLE IF NOT EXISTS
   referal_users (
     id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -43,6 +45,32 @@ func main() {
     owner_tg_id bigint unsigned NOT NULL,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
+  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
+
+	runSql(sql, db)
+
+	sql = `CREATE TABLE
+  vpn_clients (
+    id int NOT NULL,
+    enabled tinyint(1) NOT NULL,
+    total int NOT NULL,
+    lastOnline int NOT NULL,
+    uuid varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
+    inbound_id int NOT NULL,
+    user_id bigint unsigned NOT NULL,
+    timestamp_expire int NOT NULL
+  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
+
+	runSql(sql, db)
+
+	sql = `CREATE TABLE
+  inbounds (
+    id int NOT NULL,
+    total int unsigned NOT NULL,
+    calc_total int unsigned NOT NULL,
+    protocol varchar(255) NOT NULL,
+    tag varchar(255) NOT NULL
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
 
 	runSql(sql, db)

@@ -36,10 +36,13 @@ type ListResponse struct {
 }
 
 type ListObj struct {
+	Id          int                  `json:"id"`
 	Up          int                  `json:"up"`
 	Down        int                  `json:"down"`
 	Total       int                  `json:"total"`
 	AllTime     int                  `json:"allTime"`
+	Protocol    string               `json:"protocol"`
+	Tag         string               `json:"tag"`
 	ClientStats []ListObjClientStats `json:"clientStats"`
 }
 
@@ -49,4 +52,8 @@ type ListObjClientStats struct {
 	Down       int    `json:"down"`
 	AllTime    int    `json:"allTime"`
 	LastOnline int    `json:"lastOnline"`
+	Uuid       string `json:"uuid"`
+	Total      int    `json:"total"`
+	Id         int    `json:"id"`
+	Enable     bool   `json:"enable"`
 }
