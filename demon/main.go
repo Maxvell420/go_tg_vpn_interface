@@ -6,26 +6,48 @@ import (
 	"io"
 	"net/http"
 
-	// "github.com/davecgh/go-spew/spew"
-
 	"GO/app/core"
 	"GO/app/telegram"
 	"GO/app/telegram/entities"
 	"GO/app/telegram/updates"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 )
 
 var (
 	UserChannels map[int]entities.UserChannel
 	Context      core.Context
+	jobsChannel  chan entities.Job
 )
 
 func main() {
 	godotenv.Load("../.env")
 	http.HandleFunc("/webhook", httpHandler)
 	UserChannels = make(map[int]entities.UserChannel)
-	http.ListenAndServe(":8000", nil)
+	jobsChannel = make(chan entities.Job)
+	go handleJobs(jobsChannel)
+	err := http.ListenAndServe(":8000", nil)
+	if err != nil {
+		spew.Dump(err)
+	}
+}
+
+func handleJob(job entities.Job) {
+	switch job.Type {
+	case entities.TrafficUsage:
+		go handleTrafficUsage(job)
+	}
+}
+
+func handleJobs(jobsChannel chan entities.Job) {
+	for job := range jobsChannel {
+		handleJob(job)
+	}
+}
+
+func handleTrafficUsage(job entities.Job) {
+	spew.Dump(job)
 }
 
 func httpHandler(resp http.ResponseWriter, req *http.Request) {
@@ -44,35 +66,36 @@ func httpHandler(resp http.ResponseWriter, req *http.Request) {
 
 	value := update.Result
 
-	handleUpdates(value, &Context)
+	handleUpdates(value, &Context, jobsChannel)
 	resp.WriteHeader(http.StatusOK)
 }
 
-func handleUpdates(tg_update updates.Update, Context *core.Context) {
+func handleUpdates(tg_update updates.Update, Context *core.Context, jobsChannel chan entities.Job) {
 	user_id := tg_update.GetUserId()
 	activeStruct, ok := UserChannels[user_id]
 	if !ok {
 		ch := make(chan *updates.Update)
 		activeStruct = entities.UserChannel{Update: &tg_update, Ch: &ch}
 		UserChannels[user_id] = activeStruct
-		go handleUpdate(&ch, Context)
+		go handleUpdate(&ch, Context, jobsChannel)
 	}
 	*activeStruct.Ch <- &tg_update
 
 	// Здесь нужно будет разбить обновления где есть юзер а где нет
 }
 
-func handleUpdate(channel *chan *updates.Update, Context *core.Context) {
-	facade := telegram.TelegramFacade{Cntx: Context}
+func handleUpdate(channel *chan *updates.Update, Context *core.Context, jobsChannel chan entities.Job) {
+	builder := telegram.TelegramBuilder{Cntx: Context}
+	facade := telegram.TelegramFacade{Builder: &builder}
 	for item := range *channel {
 		update_type := item.GetUpdateType()
 		switch update_type {
 		case updates.MessageType:
-			facade.HandleMessageUpdate(*item.GetMessage())
+			facade.HandleMessageUpdate(*item.GetMessage(), jobsChannel)
 		case updates.MyChatMemberType:
-			facade.HandleMyChatMemberUpdate(*item.GetMyChatMember())
+			facade.HandleMyChatMemberUpdate(*item.GetMyChatMember(), jobsChannel)
 		case updates.CallbackQueryType:
-			facade.HandleCallbackQuery(*item.GetCallbackQuery())
+			facade.HandleCallbackQuery(*item.GetCallbackQuery(), jobsChannel)
 		}
 	}
 }

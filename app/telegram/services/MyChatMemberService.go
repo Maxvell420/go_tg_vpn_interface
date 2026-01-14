@@ -3,6 +3,7 @@ package services
 import (
 	"GO/app/domain/User/Models"
 	"GO/app/domain/User/Repositories"
+	"GO/app/telegram/entities"
 	"GO/app/telegram/updates"
 )
 
@@ -10,7 +11,7 @@ type MyChatMemberService struct {
 	UserRepository Repositories.UserRepository
 }
 
-func (s *MyChatMemberService) HandleMyChatMemberUpdate(update updates.MyChatMember) {
+func (s *MyChatMemberService) HandleMyChatMemberUpdate(update updates.MyChatMember, jobsChannel chan entities.Job) {
 	user_id := update.GetUser()
 	user, err := s.UserRepository.GetByTgID(user_id)
 	if err != nil {
