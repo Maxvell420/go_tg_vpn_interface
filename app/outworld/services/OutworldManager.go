@@ -6,6 +6,6 @@ type OutworldManager struct {
 	XuiService  *XuiService
 }
 
-func (m *OutworldManager) GetInbounds(chat_id int) {
-	m.XuiService.GetInbounds()
+func (m *OutworldManager) GetInbounds() []xui.ListObj {
+	return m.XuiService.GetInbounds()
 }

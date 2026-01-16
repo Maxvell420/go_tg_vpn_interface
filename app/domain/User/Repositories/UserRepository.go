@@ -6,7 +6,6 @@ import (
 
 	"GO/app/core/database"
 	"GO/app/domain/User/Models"
-	"github.com/davecgh/go-spew/spew"
 )
 
 type UserRepository struct {
@@ -64,6 +63,6 @@ func (r *UserRepository) Persist(user Models.UserModel) {
 		_, err = r.Db.Exec(sql, user.GetTgId(), user.GetUserName(), user.GetKicked(), user.GetAdmin())
 	}
 	if err != nil {
-		spew.Dump(err)
+		// TODO: обработать ошибку
 	}
 }

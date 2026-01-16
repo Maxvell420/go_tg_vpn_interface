@@ -52,8 +52,9 @@ func main() {
 	sql = `CREATE TABLE
   vpn_clients (
     id int NOT NULL,
-    enabled tinyint(1) NOT NULL,
+    enabled enum('yes', 'no') NOT NULL,
     total int NOT NULL,
+    remaining int NOT NULL,
     lastOnline int NOT NULL,
     uuid varchar(255) NOT NULL,
     email varchar(255) NOT NULL,

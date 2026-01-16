@@ -1,6 +1,7 @@
 package outworld
 
 import (
+	"GO/app/libs/3xui"
 	"GO/app/libs/telegram"
 )
 
@@ -25,7 +26,7 @@ func (f *OutworldFacade) SendTelegramRefLinkMessage(chat_id int, link string) {
 	service.SendTelegramRefLinkMessage(chat_id, link)
 }
 
-func (f *OutworldFacade) GetInbounds(chat_id int) {
+func (f *OutworldFacade) GetInbounds() []xui.ListObj {
 	manager := f.Builder.BuildOutworldManager()
-	manager.GetInbounds(chat_id)
+	return manager.GetInbounds()
 }
