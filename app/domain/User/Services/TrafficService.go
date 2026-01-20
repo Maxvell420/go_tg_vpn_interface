@@ -6,22 +6,23 @@ import (
 )
 
 type TrafficService struct {
-	VpnClientRepository *Repositories.VpnClientRepository
+	InboundService      *InboundService
 	OutworldFacade      *outworld.OutworldFacade
+	InboundRepository   *Repositories.InboundRepository
+	VpnClientRepository *Repositories.VpnClientRepository
 }
 
 func (s *TrafficService) HandleTrafficUsage() {
-	uuidMap, _ := s.VpnClientRepository.AllUuidMap()
+	values_inbounds := s.InboundService.GetInbounds()
 
-	clients := s.OutworldFacade.GetInbounds()
+	vpn_inbounds := s.OutworldFacade.GetInbounds()
 
-	for _, client := range clients {
-		vpnClient, ok := uuidMap[client.Uuid]
+	for _, vpn_inbound := range vpn_inbounds {
+		values_inbound, ok := values_inbounds[vpn_inbound.Id]
+
+		// Здесь нужно будет сравнить значения и если они не совпадают то нужно обновить значения в базе данных или сознать новые записи
 		if ok {
-			vpnClient.Total = client.Total
-			vpnClient.Remaining = client.Remaining
-			vpnClient.LastOnline = client.LastOnline
-			vpnClient.Enabled = client.Enabled
+			values_inbound.Total = vpn_inbound.Total
 		}
 	}
 }

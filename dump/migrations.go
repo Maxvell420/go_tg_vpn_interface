@@ -48,11 +48,11 @@ func main() {
 
 	runSql(sql, db)
 
-	sql = `CREATE TABLE
+	sql = `CREATE TABLE IF NOT EXISTS
   vpn_clients (
     id int NOT NULL,
     enabled enum('yes', 'no') NOT NULL,
-    total int NOT NULL,
+    total bigint NOT NULL,
     remaining bigint NOT NULL,
     lastOnline int NOT NULL,
     uuid varchar(255) NOT NULL,
@@ -64,18 +64,17 @@ func main() {
 
 	runSql(sql, db)
 
-	sql = `CREATE TABLE
+	sql = `CREATE TABLE IF NOT EXISTS
   inbounds (
     id int NOT NULL,
     total bigint unsigned NOT NULL,
-    calc_total bigint unsigned NOT NULL,
     protocol varchar(255) NOT NULL,
     tag varchar(255) NOT NULL
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
 
 	runSql(sql, db)
 
-	sql = `CREATE TABLE
+	sql = `CREATE TABLE IF NOT EXISTS
   sales (
     id int unsigned NOT NULL AUTO_INCREMENT,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -89,7 +88,7 @@ func main() {
 
 	runSql(sql, db)
 
-	sql = `CREATE TABLE
+	sql = `CREATE TABLE IF NOT EXISTS
   vpn_traffic_products (
     id int unsigned NOT NULL AUTO_INCREMENT,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -97,12 +96,13 @@ func main() {
     cost double(8, 2) NOT NULL,
     traffic bigint DEFAULT NULL,
     time_amount bigint unsigned DEFAULT NULL,
+    is_active enum('yes', 'no') NOT NULL DEFAULT 'yes',
     PRIMARY KEY (id)
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
 
 	runSql(sql, db)
 
-	sql = `CREATE TABLE
+	sql = `CREATE TABLE IF NOT EXISTS
   vpn_traffic_usage (
     id int unsigned NOT NULL AUTO_INCREMENT,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
