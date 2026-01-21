@@ -8,5 +8,5 @@ type Inbound struct {
 	CalcTotal int
 	Protocol  string
 	Tag       string
-	Clients   []Models.VpnClient
+	Clients   map[int]Models.VpnClient
 }

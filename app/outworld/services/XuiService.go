@@ -17,3 +17,13 @@ func (s *XuiService) GetInbounds() []xui.ListObj {
 	response := body.(xui.ListResponse)
 	return response.Obj
 }
+
+func (s *XuiService) DisableClient() {
+	// закрывать клиента
+	// var req xui.VpnRequest
+	// req = &xui.XuiRequest{Method: xui.DisableClient, ClientId: clientId}
+
+	// body := s.Request.SendPost(req)
+	// response := body.(xui.DisableClientResponse)
+	// return response.Success
+}

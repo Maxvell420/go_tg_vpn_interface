@@ -24,7 +24,7 @@ func (s *InboundService) GetInbounds() map[int]values.Inbound {
 			values_inbound, ok := values_inbounds[*inbound.Id]
 
 			if ok {
-				values_inbound.Clients = append(values_inbound.Clients, client)
+				values_inbound.Clients[*client.Id] = client
 			} else {
 				values_inbound = values.Inbound{
 					Id:        *inbound.Id,
@@ -32,7 +32,7 @@ func (s *InboundService) GetInbounds() map[int]values.Inbound {
 					CalcTotal: *inbound.CalcTotal,
 					Protocol:  *inbound.Protocol,
 					Tag:       *inbound.Tag,
-					Clients:   []Models.VpnClient{client},
+					Clients:   map[int]Models.VpnClient{*client.Id: client},
 				}
 				values_inbounds[*inbound.Id] = values_inbound
 			}
