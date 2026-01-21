@@ -30,3 +30,8 @@ func (f *OutworldFacade) GetInbounds() []xui.ListObj {
 	manager := f.Builder.BuildOutworldManager()
 	return manager.GetInbounds()
 }
+
+func (f *OutworldFacade) DisableClient() {
+	service := f.Builder.BuildXuiService()
+	service.DisableClient()
+}

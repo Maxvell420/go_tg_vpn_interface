@@ -43,3 +43,26 @@ func (r *VpnClientRepository) All() []Models.VpnClient {
 	}
 	return vpnClients
 }
+
+func (r *VpnClientRepository) Persist(client *Models.VpnClient) {
+	var sql string
+	var err error
+
+	if client.GetID() != nil {
+		sql = "UPDATE vpn_clients SET enabled = ?, total = ?, remaining = ?, last_online = ?, uuid = ?, email = ?, inbound_id = ?, user_id = ?, timestamp_expire = ? WHERE id = ?"
+		_, err = r.Db.Exec(sql, client.Enabled, client.Total, client.Remaining, client.LastOnline, client.Uuid, client.Email, client.InboundId, client.UserId, client.TimestampExpire, client.GetID())
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		sql = "INSERT INTO vpn_clients(enabled, total, remaining, last_online, uuid, email, inbound_id, user_id, timestamp_expire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+		_, err = r.Db.Exec(sql, client.Enabled, client.Total, client.Remaining, client.LastOnline, client.Uuid, client.Email, client.InboundId, client.UserId, client.TimestampExpire)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func (r *VpnClientRepository) BuildModel(id int, enabled bool, total int, remaining int, lastOnline int, uuid string, email string, inboundId int, userId int, timestampExpire int) *Models.VpnClient {
+	return &Models.VpnClient{Id: &id, Enabled: &enabled, Total: &total, Remaining: &remaining, LastOnline: &lastOnline, Uuid: &uuid, Email: &email, InboundId: &inboundId, UserId: &userId, TimestampExpire: &timestampExpire}
+}

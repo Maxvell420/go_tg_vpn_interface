@@ -20,3 +20,11 @@ func (v *VpnClient) GetTable() string {
 func (v *VpnClient) GetID() *int {
 	return v.Id
 }
+
+func (v *VpnClient) IsUnlimited() bool {
+	return v.Total == nil
+}
+
+func (v *VpnClient) IsExpired(timestamp int64) bool {
+	return int64(*v.TimestampExpire) > timestamp
+}
